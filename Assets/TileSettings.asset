@@ -12,36 +12,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 996706eae2821477b8efba12e61c8afc, type: 3}
   m_Name: TileSettings
   m_EditorClassIdentifier: 
-  AnimationTime: 0.3
+  AnimationTime: 0.2
   AnimationCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
-      time: 0.0014648438
+      time: 0
       value: 0
-      inSlope: 6.20373
-      outSlope: 6.20373
+      inSlope: 2
+      outSlope: 2
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
-      outWeight: 0.20219453
-    - serializedVersion: 3
-      time: 0.10299722
-      value: 0.37219495
-      inSlope: 2.0394092
-      outSlope: 2.0394092
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.40788606
-      outWeight: 0.33333334
+      outWeight: 0
     - serializedVersion: 3
       time: 1
       value: 1
-      inSlope: 0
-      outSlope: 0
+      inSlope: 0.55886424
+      outSlope: 0.55886424
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0
+      inWeight: 0.07174218
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
