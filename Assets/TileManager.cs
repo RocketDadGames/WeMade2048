@@ -14,7 +14,6 @@ public class TileManager : MonoBehaviour
 
     private bool _isAnimating;
 
-    // Start is called before the first frame update
     void Start()
     {
         GetTilePositions();
@@ -23,14 +22,23 @@ public class TileManager : MonoBehaviour
         UpdateTilePositions(true);
     }
 
-    // Update is called once per frame
+    private int _lastXInput;
+    private int _lastYInput;
+
     void Update()
     {
-        var xInput = Input.GetAxisRaw("Horizontal");
-        var yInput = Input.GetAxisRaw("Vertical");
+        var xInput = Mathf.RoundToInt(Input.GetAxisRaw("Horizontal"));
+        var yInput = Mathf.RoundToInt(Input.GetAxisRaw("Vertical"));
 
-        if (!_isAnimating)
-            TryMove(Mathf.RoundToInt(xInput), Mathf.RoundToInt(yInput));
+        if (_lastXInput == 0 && _lastYInput == 0)
+        {
+            if (!_isAnimating)
+                TryMove(xInput, yInput);
+        }
+
+        _lastXInput = xInput;
+        _lastYInput = yInput;
+
     }
 
     private void GetTilePositions()
@@ -100,6 +108,11 @@ public class TileManager : MonoBehaviour
     private IEnumerator WaitForTileAnimation()
     {
         yield return new WaitForSeconds(tileSettings.AnimationTime);
+        if (!TrySpawnTile())
+        {
+            Debug.LogError("UNABLE TO SPAWN TILE");
+        }
+        UpdateTilePositions(true);
         _isAnimating = false;
     }
 
