@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class TileManager : MonoBehaviour
@@ -40,6 +41,12 @@ public class TileManager : MonoBehaviour
         _lastXInput = xInput;
         _lastYInput = yInput;
 
+    }
+
+    public void RestartGame()
+    {
+        var activeScene = SceneManager.GetActiveScene();
+        SceneManager.LoadScene(activeScene.name);
     }
 
     private void GetTilePositions()
