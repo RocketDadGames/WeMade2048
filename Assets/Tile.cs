@@ -82,4 +82,9 @@ public class Tile : MonoBehaviour
             _mergeTile.SetPosition(newPos, false);
         }
     }
+
+    public int GetValue()
+    {
+        return _value;
+    }
 }

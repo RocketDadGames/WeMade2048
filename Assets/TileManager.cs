@@ -13,6 +13,7 @@ public class TileManager : MonoBehaviour
     private readonly Tile[,] _tiles = new Tile[GridSize, GridSize];
     [SerializeField] private Tile tilePrefab;
     [SerializeField] private TileSettings tileSettings;
+    private Stack<GameState> _gameStates = new Stack<GameState>();
 
     private bool _isAnimating;
 
@@ -137,6 +138,7 @@ public class TileManager : MonoBehaviour
         }
 
         _tilesUpdated = false;
+        int[,] preMoveTileValues = GetCurrentTileValues();
 
         if (x == 0)
         {
@@ -154,7 +156,50 @@ public class TileManager : MonoBehaviour
         }
 
         if (_tilesUpdated)
+        {
+            _gameStates.Push(new GameState() { tileValues = preMoveTileValues });
             UpdateTilePositions(false);
+        }
+    }
+
+    private int[,] GetCurrentTileValues()
+    {
+        int[,] result = new int[GridSize, GridSize];
+        for (int x = 0; x < GridSize; x++)
+            for (int y = 0; y < GridSize; y++)
+                if (_tiles[x, y] != null)
+                    result[x, y] = _tiles[x, y].GetValue();
+
+        return result;
+    }
+
+    public void LoadLastTileValues()
+    {
+        if (_isAnimating)
+            return;
+
+        if (!_gameStates.Any())
+            return;
+
+        GameState previousGameState = _gameStates.Pop();
+
+        foreach (Tile t in _tiles)
+            if (t != null)
+                Destroy(t.gameObject);
+
+        for (int x = 0; x < GridSize; x++)
+            for (int y = 0; y < GridSize; y++)
+            {
+                _tiles[x,y] = null;
+                if(previousGameState.tileValues[x,y] == 0)
+                    continue;
+                
+                Tile tile = Instantiate(tilePrefab, transform.parent);
+                tile.SetValue(previousGameState.tileValues[x,y]);
+                _tiles[x,y] = tile;
+            }
+        
+        UpdateTilePositions(true);
     }
 
     private bool TileExistsBetween(int x, int y, int x2, int y2)
