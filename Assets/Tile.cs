@@ -12,6 +12,7 @@ public class Tile : MonoBehaviour
     private float _count;
     [SerializeField] private TileSettings tileSettings;
     private Animator _animator;
+    private TileManager _tileManager;
 
     public void SetValue(int value)
     {
@@ -22,6 +23,7 @@ public class Tile : MonoBehaviour
     private void Start()
     {
         _animator = GetComponent<Animator>();
+        _tileManager = FindObjectOfType<TileManager>();
     }
 
     private void Update()
@@ -42,7 +44,9 @@ public class Tile : MonoBehaviour
             _isAnimating = false;
             if (_mergeTile != null)
             {
-                SetValue(_value + _mergeTile._value);
+                int newValue = _value + _mergeTile._value;
+                _tileManager.AddScore(newValue);
+                SetValue(newValue);
                 Destroy(_mergeTile.gameObject);
                 _animator.SetTrigger("Merge");
                 _mergeTile = null;

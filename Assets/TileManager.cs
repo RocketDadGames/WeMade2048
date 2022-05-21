@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -13,9 +14,11 @@ public class TileManager : MonoBehaviour
     private readonly Tile[,] _tiles = new Tile[GridSize, GridSize];
     [SerializeField] private Tile tilePrefab;
     [SerializeField] private TileSettings tileSettings;
+    [SerializeField] private UnityEvent<int> scoreUpdated;
     private Stack<GameState> _gameStates = new Stack<GameState>();
 
     private bool _isAnimating;
+    private int _score;
 
     void Start()
     {
@@ -42,6 +45,12 @@ public class TileManager : MonoBehaviour
         _lastXInput = xInput;
         _lastYInput = yInput;
 
+    }
+
+    public void AddScore(int value)
+    {
+        _score += value;
+        scoreUpdated.Invoke(_score);
     }
 
     public void RestartGame()
@@ -157,7 +166,7 @@ public class TileManager : MonoBehaviour
 
         if (_tilesUpdated)
         {
-            _gameStates.Push(new GameState() { tileValues = preMoveTileValues });
+            _gameStates.Push(new GameState() { tileValues = preMoveTileValues, score = _score });
             UpdateTilePositions(false);
         }
     }
@@ -173,7 +182,7 @@ public class TileManager : MonoBehaviour
         return result;
     }
 
-    public void LoadLastTileValues()
+    public void LoadLastGameState()
     {
         if (_isAnimating)
             return;
@@ -183,6 +192,9 @@ public class TileManager : MonoBehaviour
 
         GameState previousGameState = _gameStates.Pop();
 
+        _score = previousGameState.score;
+        scoreUpdated.Invoke(_score);
+
         foreach (Tile t in _tiles)
             if (t != null)
                 Destroy(t.gameObject);
@@ -190,15 +202,15 @@ public class TileManager : MonoBehaviour
         for (int x = 0; x < GridSize; x++)
             for (int y = 0; y < GridSize; y++)
             {
-                _tiles[x,y] = null;
-                if(previousGameState.tileValues[x,y] == 0)
+                _tiles[x, y] = null;
+                if (previousGameState.tileValues[x, y] == 0)
                     continue;
-                
+
                 Tile tile = Instantiate(tilePrefab, transform.parent);
-                tile.SetValue(previousGameState.tileValues[x,y]);
-                _tiles[x,y] = tile;
+                tile.SetValue(previousGameState.tileValues[x, y]);
+                _tiles[x, y] = tile;
             }
-        
+
         UpdateTilePositions(true);
     }
 
