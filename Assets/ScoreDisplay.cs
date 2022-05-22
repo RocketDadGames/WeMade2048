@@ -8,7 +8,7 @@ public class ScoreDisplay : MonoBehaviour
     private TMP_Text _text;
     private Animator _animator;
 
-    void Start()
+    void Awake()
     {
         _text = GetComponent<TMP_Text>();
         _animator = GetComponent<Animator>();
