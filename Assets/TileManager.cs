@@ -17,7 +17,9 @@ public class TileManager : MonoBehaviour
     [SerializeField] private UnityEvent<int> scoreUpdated;
     [SerializeField] private UnityEvent<int> bestScoreUpdated;
     [SerializeField] private UnityEvent<int> moveCountUpdated;
+    [SerializeField] private UnityEvent<System.TimeSpan> gameTimeUpdated;
     private Stack<GameState> _gameStates = new Stack<GameState>();
+    private System.Diagnostics.Stopwatch _gameStopwatch = new System.Diagnostics.Stopwatch();
 
     private bool _isAnimating;
     private int _score;
@@ -31,6 +33,7 @@ public class TileManager : MonoBehaviour
         TrySpawnTile();
         UpdateTilePositions(true);
 
+        _gameStopwatch.Start();
         _bestScore = PlayerPrefs.GetInt("BestScore", 0);
         bestScoreUpdated.Invoke(_bestScore);
     }
@@ -40,6 +43,8 @@ public class TileManager : MonoBehaviour
 
     void Update()
     {
+        gameTimeUpdated.Invoke(_gameStopwatch.Elapsed);
+        
         var xInput = Mathf.RoundToInt(Input.GetAxisRaw("Horizontal"));
         var yInput = Mathf.RoundToInt(Input.GetAxisRaw("Vertical"));
 
