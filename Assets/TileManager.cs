@@ -16,11 +16,13 @@ public class TileManager : MonoBehaviour
     [SerializeField] private TileSettings tileSettings;
     [SerializeField] private UnityEvent<int> scoreUpdated;
     [SerializeField] private UnityEvent<int> bestScoreUpdated;
+    [SerializeField] private UnityEvent<int> moveCountUpdated;
     private Stack<GameState> _gameStates = new Stack<GameState>();
 
     private bool _isAnimating;
     private int _score;
     private int _bestScore;
+    private int _moveCount;
 
     void Start()
     {
@@ -177,7 +179,9 @@ public class TileManager : MonoBehaviour
 
         if (_tilesUpdated)
         {
-            _gameStates.Push(new GameState() { tileValues = preMoveTileValues, score = _score });
+            _gameStates.Push(new GameState() { tileValues = preMoveTileValues, score = _score, moveCount = _moveCount });
+            _moveCount++;
+            moveCountUpdated.Invoke(_moveCount);
             UpdateTilePositions(false);
         }
     }
@@ -205,6 +209,9 @@ public class TileManager : MonoBehaviour
 
         _score = previousGameState.score;
         scoreUpdated.Invoke(_score);
+
+        _moveCount = previousGameState.moveCount;
+        moveCountUpdated.Invoke(_moveCount);
 
         foreach (Tile t in _tiles)
             if (t != null)
