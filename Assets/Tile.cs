@@ -1,5 +1,7 @@
 using UnityEngine;
 using TMPro;
+using System.Linq;
+using UnityEngine.UI;
 
 public class Tile : MonoBehaviour
 {
@@ -13,17 +15,22 @@ public class Tile : MonoBehaviour
     [SerializeField] private TileSettings tileSettings;
     private Animator _animator;
     private TileManager _tileManager;
+    private Image _tileImage;
 
     public void SetValue(int value)
     {
         _value = value;
         text.text = value.ToString();
+        TileColor newColor = tileSettings.TileColors.FirstOrDefault(color => color.value == _value) ?? new TileColor();
+        text.color = newColor.fgColor;
+        _tileImage.color = newColor.bgColor;
     }
 
-    private void Start()
+    private void Awake()
     {
         _animator = GetComponent<Animator>();
         _tileManager = FindObjectOfType<TileManager>();
+        _tileImage = GetComponent<Image>();
     }
 
     private void Update()
