@@ -17,7 +17,8 @@ public class ScoreDisplay : MonoBehaviour
     public void UpdateScore(int score)
     {
         _text.text = score.ToString();
-        _animator.SetTrigger("ScoreUpdated");
+        if(_animator != null)
+            _animator.SetTrigger("ScoreUpdated");
     }
 
 }
