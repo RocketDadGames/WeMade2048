@@ -21,6 +21,7 @@ public class TileManager : MonoBehaviour
     [SerializeField] private GameOverScreen gameOverScreen;
     private Stack<GameState> _gameStates = new Stack<GameState>();
     private System.Diagnostics.Stopwatch _gameStopwatch = new System.Diagnostics.Stopwatch();
+    private IInputManager _inputManager = new MultipleInputManager(new KeyboardInputManager(), new SwipeInputManager());
 
     private bool _isAnimating;
     private int _score;
@@ -39,24 +40,16 @@ public class TileManager : MonoBehaviour
         bestScoreUpdated.Invoke(_bestScore);
     }
 
-    private int _lastXInput;
-    private int _lastYInput;
+
 
     void Update()
     {
         gameTimeUpdated.Invoke(_gameStopwatch.Elapsed);
 
-        var xInput = Mathf.RoundToInt(Input.GetAxisRaw("Horizontal"));
-        var yInput = Mathf.RoundToInt(Input.GetAxisRaw("Vertical"));
+        InputResult input = _inputManager.GetInput();
 
-        if (_lastXInput == 0 && _lastYInput == 0)
-        {
-            if (!_isAnimating)
-                TryMove(xInput, yInput);
-        }
-
-        _lastXInput = xInput;
-        _lastYInput = yInput;
+        if (!_isAnimating)
+            TryMove(input.XInput, input.YInput);
 
     }
 
